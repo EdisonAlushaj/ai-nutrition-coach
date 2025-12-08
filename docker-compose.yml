@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+
+  api-gateway:
+    build: ./api_gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api_gateway/app:/usr/src/app/app
+
+  user-service:
+    build: ./user_service
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db/mydatabase
+    depends_on:
+      - db
+    volumes:
+      - ./user_service/app:/usr/src/app/app
+
+  nutrition-service:
+    build: ./nutrition_service
+    ports:
+      - "8002:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db/mydatabase
+    depends_on:
+      - db
+    volumes:
+      - ./nutrition_service/app:/usr/src/app/app
+
+  logging-analytics-service:
+    build: ./logging_analytics_service
+    ports:
+      - "8003:8000"
+    environment:
+      - DATABASE_URL=postgresql://user:password@db/mydatabase
+    depends_on:
+      - db
+    volumes:
+      - ./logging_analytics_service/app:/usr/src/app/app
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mydatabase
+    ports:
+      - "5433:5432"
+
+volumes:
+  postgres_data:
