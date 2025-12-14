@@ -2,6 +2,10 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 import enum
 
+class RoleEnum(str, enum.Enum):
+    admin = "admin"
+    user = "user"
+
 class GenderEnum(str, enum.Enum):
     male = "male"
     female = "female"
@@ -37,14 +41,29 @@ class Profile(ProfileBase):
 
 class UserBase(BaseModel):
     email: EmailStr
+    role: RoleEnum = RoleEnum.user
 
 class UserCreate(UserBase):
     password: str
     profile: ProfileCreate
+    role: RoleEnum = RoleEnum.user
 
 class User(UserBase):
     id: int
     is_active: bool
     profile: Optional[Profile] = None
+    role: RoleEnum
     class Config:
         from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+            
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str

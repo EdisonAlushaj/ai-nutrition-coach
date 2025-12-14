@@ -1,5 +1,6 @@
 import httpx
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import RedirectResponse
 from . import schemas 
 
 app = FastAPI(title="API Gateway")
@@ -9,6 +10,11 @@ services = {
     "nutrition": "http://nutrition-service:8000",
     "logging": "http://logging-analytics-service:8000" 
 }
+
+@app.get("/")
+async def root():
+    """Redirect root path to Swagger documentation"""
+    return RedirectResponse(url="/docs")
 
 @app.post("/register", status_code=201)
 async def register_user(user_data: schemas.UserCreate):
