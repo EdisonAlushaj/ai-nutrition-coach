@@ -41,12 +41,27 @@ class Profile(ProfileBase):
 
 class UserBase(BaseModel):
     email: EmailStr
-    role: RoleEnum = RoleEnum.user
 
 class UserCreate(UserBase):
     password: str
     profile: ProfileCreate
-    role: RoleEnum = RoleEnum.user
+    # role field removed to hide it from Swagger input
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "email": "user@example.com",
+                "password": "password",
+                "profile": {
+                    "age": 30,
+                    "gender": "male",
+                    "height_cm": 180,
+                    "weight_kg": 75,
+                    "activity_level": "moderately_active",
+                    "goal": "maintain"
+                }
+            }
+        }
 
 class User(UserBase):
     id: int
@@ -67,3 +82,6 @@ class TokenData(BaseModel):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+class UserAuthenticated(User, Token):
+    pass

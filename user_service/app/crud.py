@@ -11,7 +11,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     db_user = models.User(
         email=user.email, 
         hashed_password=hashed_password,
-        role=getattr(user, 'role', RoleEnum.user)
+        role=RoleEnum.user # Force role to be user regardless of input
     )
     db.add(db_user)
     db.commit()
