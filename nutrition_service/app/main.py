@@ -49,3 +49,12 @@ async def get_meal_plan_for_user(user_id: int, db: Session = Depends(get_db)):
     recommended_meals = crud.generate_meal_plan(db, goal=user_profile.goal)
     
     return recommended_meals
+
+@app.get("/meals/search", response_model=List[schemas.Meal])
+def search_for_meals(name: str, db: Session = Depends(get_db)):
+    """Search for meals by name query."""
+    meals = crud.search_meal_by_name(db, name=name)
+    if not meals:
+        raise HTTPException(status_code=404, detail="Meals not found matching '{name}'")
+    
+    return meals

@@ -59,3 +59,8 @@ def create_meal(db: Session, meal: schemas.MealCreate):
 def generate_meal_plan(db: Session, goal: schemas.GoalEnum) -> List[models.Meal]:
     planner = MealPlanFactory.create_planner(goal)
     return planner.generate_plan(db)
+
+def search_meal_by_name(db: Session, name: str) -> List[models.Meal]:
+    """Searches for meals with names similar to the search query."""
+    search_pattern = f"%{name}%"
+    return db.query(models.Meal).filter(models.Meal.name.ilike(search_pattern)).limit(5).all()

@@ -1,5 +1,5 @@
 import httpx
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from . import schemas 
 
 app = FastAPI(title="API Gateway")
@@ -7,7 +7,8 @@ app = FastAPI(title="API Gateway")
 services = {
     "users": "http://user-service:8000",
     "nutrition": "http://nutrition-service:8000",
-    "logging": "http://logging-analytics-service:8000" 
+    "logging": "http://logging-analytics-service:8000",
+    "recognition": "http://food-recognition-service:8000"
 }
 
 @app.post("/register", status_code=201)
@@ -72,6 +73,46 @@ async def get_meal_plan(user_id: int):
     async with httpx.AsyncClient(follow_redirects=True) as client:
         try:
             response = await client.get(f"{services['nutrition']}/users/{user_id}/meal-plan")
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(status_code=e.response.status_code, detail=e.response.json())
+        except httpx.RequestError as e:
+            raise HTTPException(status_code=503, detail=f"The Nutrition Service is unavailable: {str(e)}")
+
+@app.post("/recognize-food")
+async def recognize_food(file: UploadFile = File(...)):
+    """
+    Receives a food image, forwards it to the recognition service,
+    and returns the prediction results.
+    """
+    async with httpx.AsyncClient() as client:
+        try:
+            files = {'file': (file.filename, await file.read(), file.content_type)}
+            
+            response = await client.post(
+                f"{services['recognition']}/predict",
+                files=files
+            )
+            response.raise_for_status()
+            return response.json()
+        except httpx.HTTPStatusError as e:
+            raise HTTPException(status_code=e.response.status_code, detail=e.response.json())
+        except httpx.RequestError as e:
+            raise HTTPException(status_code=503, detail=f"The Food Recognition Service is unavailable: {str(e)}")
+
+@app.get("/search-food")
+async def search_food(name: str):
+    """
+    Searches for a food item by name in the nutrition service.
+    Example: /search-food?name=pizza
+    """
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(
+                f"{services['nutrition']}/meals/search",
+                params={"name": name}
+            )
             response.raise_for_status()
             return response.json()
         except httpx.HTTPStatusError as e:
