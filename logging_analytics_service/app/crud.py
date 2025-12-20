@@ -12,8 +12,6 @@ def update_daily_analytics(db: Session, user_id: int, log: schemas.FoodLogCreate
     ).first()
     
     if not analytics:
-        # If no record exists for today, create a NEW one with the log's values.
-        # This is the key change: we initialize the values directly.
         analytics = models.DailyAnalytics(
             user_id=user_id,
             date=today,
@@ -24,7 +22,6 @@ def update_daily_analytics(db: Session, user_id: int, log: schemas.FoodLogCreate
         )
         db.add(analytics)
     else:
-        # If a record already exists, just add to the totals.
         analytics.total_calories += log.calories_consumed
         analytics.total_protein += log.protein_g
         analytics.total_carbs += log.carbs_g
@@ -41,7 +38,6 @@ def create_food_log(db: Session, user_id: int, log: schemas.FoodLogCreate):
     db.commit()
     db.refresh(db_log)
     
-    # After creating the log, update the analytics
     update_daily_analytics(db, user_id=user_id, log=log)
     
     return db_log
