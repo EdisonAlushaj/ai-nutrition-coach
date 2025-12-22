@@ -40,6 +40,13 @@ services:
     volumes:
       - ./logging_analytics_service/app:/usr/src/app/app
 
+  food-recognition-service:
+    build: ./food_recognition_service
+    ports:
+      - "8004:8000"
+    volumes:
+      - ./food_recognition_service/app:/usr/src/app/app
+
   db:
     image: postgres:13
     volumes:
