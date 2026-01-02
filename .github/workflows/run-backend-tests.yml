@@ -1,0 +1,44 @@
+name: Run Backend Service Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test-all-services:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install Nutrition Service dependencies
+        run: pip install -r nutrition_service/requirements.txt
+
+      - name: Run Nutrition Service tests
+        run: python -m pytest nutrition_service/tests
+
+      - name: Install Logging & Analytics Service dependencies
+        run: pip install -r logging_analytics_service/requirements.txt
+
+      - name: Run Logging & Analytics Service tests
+        run: python -m pytest logging_analytics_service/tests
+
+      - name: Install Food Recognition Service dependencies
+        run: pip install -r food_recognition_service/requirements.txt --ignore-installed tensorflow
+
+      - name: Run Food Recognition Service tests
+        run: python -m pytest food_recognition_service/tests
+
+      - name: Install API Gateway dependencies
+        run: pip install -r api_gateway/requirements.txt
+
+      - name: Run API Gateway tests
+        run: python -m pytest api_gateway/tests
