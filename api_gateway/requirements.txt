@@ -2,3 +2,4 @@ fastapi[all]
 httpx
 pytest
 anyio
+pytest-asyncio
