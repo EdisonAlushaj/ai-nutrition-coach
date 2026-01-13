@@ -2,6 +2,10 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 import enum
 
+class RoleEnum(str, enum.Enum):
+    admin = "admin"
+    user = "user"
+
 class GenderEnum(str, enum.Enum):
     male = "male"
     female = "female"
@@ -41,10 +45,43 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
     profile: ProfileCreate
+    # role field removed to hide it from Swagger input
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "email": "user@example.com",
+                "password": "password",
+                "profile": {
+                    "age": 30,
+                    "gender": "male",
+                    "height_cm": 180,
+                    "weight_kg": 75,
+                    "activity_level": "moderately_active",
+                    "goal": "maintain"
+                }
+            }
+        }
 
 class User(UserBase):
     id: int
     is_active: bool
     profile: Optional[Profile] = None
+    role: RoleEnum
     class Config:
         from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    refresh_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
+            
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class UserAuthenticated(User, Token):
+    pass
