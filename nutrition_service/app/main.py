@@ -37,6 +37,16 @@ def read_meals(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     meals = crud.get_meals(db, skip=skip, limit=limit)
     return meals
 
+@app.get("/meals/{meal_id}", response_model=schemas.Meal)
+def read_meal(meal_id: int, db: Session = Depends(get_db)):
+    """
+    Retrieves the full details for a single meal by its ID.
+    """
+    db_meal = crud.get_meal_by_id(db, meal_id=meal_id)
+    if db_meal is None:
+        raise HTTPException(status_code=404, detail="Meal not found")
+    return db_meal
+
 # --- Meal Plan Endpoints ---
 
 @app.get("/users/{user_id}/meal-plan", response_model=List[schemas.Meal])
