@@ -4,4 +4,9 @@ psycopg2-binary
 python-dotenv
 passlib[bcrypt]
 bcrypt==3.2.0
+<<<<<<< HEAD
 python-jose[cryptography]
+=======
+python-jose[cryptography]
+pytest
+>>>>>>> 60421828bf4efc6682c762e8abb64f1d9b2c8144

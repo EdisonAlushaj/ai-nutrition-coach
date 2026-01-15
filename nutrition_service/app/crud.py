@@ -64,3 +64,7 @@ def search_meal_by_name(db: Session, name: str) -> List[models.Meal]:
     """Searches for meals with names similar to the search query."""
     search_pattern = f"%{name}%"
     return db.query(models.Meal).filter(models.Meal.name.ilike(search_pattern)).limit(5).all()
+
+def get_meal_by_id(db: Session, meal_id: int):
+    """Retrieves a single meal by its unique ID."""
+    return db.query(models.Meal).filter(models.Meal.id == meal_id).first()
