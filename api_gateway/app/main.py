@@ -1,10 +1,5 @@
 import httpx
-<<<<<<< HEAD
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import RedirectResponse
-=======
 from fastapi import FastAPI, HTTPException, UploadFile, File
->>>>>>> 641495c7a39316ec8fc1874683e63639bb602e4a
 from . import schemas 
 
 app = FastAPI(title="API Gateway")
