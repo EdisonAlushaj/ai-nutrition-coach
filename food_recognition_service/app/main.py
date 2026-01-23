@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.responses import RedirectResponse
 from .model_loader import get_model
 from . import image_processor
 
@@ -6,6 +7,11 @@ app = FastAPI(
     title="Food Recognition Service",
     description="An API that uses a pre-trained model to recognize food in images."
 )
+
+@app.get("/")
+async def root():
+    """Redirect root path to Swagger documentation"""
+    return RedirectResponse(url="/docs")
 
 model = get_model()
 

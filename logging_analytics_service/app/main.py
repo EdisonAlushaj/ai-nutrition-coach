@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from typing import List
 from datetime import date
@@ -9,6 +10,11 @@ from .database import engine, get_db
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Logging & Analytics Service")
+
+@app.get("/")
+async def root():
+    """Redirect root path to Swagger documentation"""
+    return RedirectResponse(url="/docs")
 
 @app.post("/users/{user_id}/logs/", response_model=schemas.FoodLog)
 def create_log_for_user(user_id: int, log: schemas.FoodLogCreate, db: Session = Depends(get_db)):
@@ -24,3 +30,29 @@ def read_analytics_for_user(user_id: int, query_date: date, db: Session = Depend
     if analytics is None:
         return schemas.DailyAnalytics(date=query_date, total_calories=0, total_protein=0, total_carbs=0, total_fat=0)
     return analytics
+
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+

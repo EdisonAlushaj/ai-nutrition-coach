@@ -13,6 +13,7 @@ services:
       - "8001:8000"
     environment:
       - DATABASE_URL=postgresql://user:password@db/mydatabase
+      - SECRET_KEY=your-secret-key-change-this-in-production
     depends_on:
       - db
     volumes:
@@ -24,6 +25,7 @@ services:
       - "8002:8000"
     environment:
       - DATABASE_URL=postgresql://user:password@db/mydatabase
+      - SECRET_KEY=your-secret-key-change-this-in-production
     depends_on:
       - db
     volumes:
@@ -46,6 +48,15 @@ services:
       - "8004:8000"
     volumes:
       - ./food_recognition_service/app:/usr/src/app/app
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80" # localhost:3000 maps to container port 80 (Nginx serving React)
+    depends_on:
+      - api-gateway # optional, if your frontend calls the API gateway
+    volumes:
+      - ./frontend:/usr/src/app # optional for live development
 
   db:
     image: postgres:13

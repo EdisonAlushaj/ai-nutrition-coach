@@ -1,21 +1,17 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from . import models, schemas
 from .security import get_password_hash, verify_password
 from .models import RoleEnum
 
 def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
+    return db.query(models.User).options(joinedload(models.User.profile)).filter(models.User.email == email).first()
 
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = get_password_hash(user.password)
     db_user = models.User(
         email=user.email, 
         hashed_password=hashed_password,
-<<<<<<< HEAD
         role=getattr(user, 'role', RoleEnum.user)
-=======
-        role=RoleEnum.user # Force role to be user regardless of input
->>>>>>> 60421828bf4efc6682c762e8abb64f1d9b2c8144
     )
     db.add(db_user)
     db.commit()
@@ -32,7 +28,7 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
 def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
+    return db.query(models.User).options(joinedload(models.User.profile)).filter(models.User.id == user_id).first()
 
 def authenticate_user(db: Session, email: str, password: str):
     """Authenticate a user by email and password"""
