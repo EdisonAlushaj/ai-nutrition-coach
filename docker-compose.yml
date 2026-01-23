@@ -13,7 +13,6 @@ services:
       - "8001:8000"
     environment:
       - DATABASE_URL=postgresql://user:password@db/mydatabase
-      - SECRET_KEY=your-super-secret-key-that-must-be-the-same-everywhere
     depends_on:
       - db
     volumes:
@@ -36,7 +35,6 @@ services:
       - "8003:8000"
     environment:
       - DATABASE_URL=postgresql://user:password@db/mydatabase
-      - SECRET_KEY=your-super-secret-key-that-must-be-the-same-everywhere
     depends_on:
       - db
     volumes:
