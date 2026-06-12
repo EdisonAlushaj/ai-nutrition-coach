@@ -1,0 +1,15 @@
+fastapi[all]
+sqlalchemy
+psycopg2-binary
+python-dotenv
+passlib[bcrypt]
+bcrypt==3.2.0
+python-jose[cryptography]
+httpx
+tensorflow
+Pillow
+numpy
+requests
+pytest
+pytest-asyncio
+anyio

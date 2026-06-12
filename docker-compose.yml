@@ -58,6 +58,32 @@ services:
     volumes:
       - ./frontend:/usr/src/app # optional for live development
 
+  # --- Monolith (alternative architecture) ---
+  # Single-process version of the whole backend. Runs side-by-side with the
+  # microservices on its OWN database so the two never interfere.
+  monolith:
+    build: ./monolith
+    ports:
+      - "8080:8000" # monolith API: http://localhost:8080/docs
+    environment:
+      - DATABASE_URL=postgresql://user:password@db-mono/mydatabase_mono
+      - SECRET_KEY=your-secret-key-change-this-in-production
+    depends_on:
+      - db-mono
+    volumes:
+      - ./monolith/app:/usr/src/app/app
+
+  db-mono:
+    image: postgres:13
+    volumes:
+      - postgres_mono_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=mydatabase_mono
+    ports:
+      - "5434:5432"
+
   db:
     image: postgres:13
     volumes:
@@ -71,3 +97,4 @@ services:
 
 volumes:
   postgres_data:
+  postgres_mono_data:
