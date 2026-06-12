@@ -3,9 +3,8 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from typing import List
 from .core.clients import get_user_profile
-from . import crud, models, schemas, security
+from . import crud, models, schemas
 from .database import engine, get_db
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 models.Base.metadata.create_all(bind=engine)
 
