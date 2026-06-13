@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const client = axios.create({
-    baseURL: 'http://localhost:8000', // Pointing to API Gateway
+    // Defaults to the API Gateway (microservices). Override with VITE_API_URL
+    // in a .env file to point at the monolith (http://localhost:8080).
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
     headers: {
         'Content-Type': 'application/json',
     },
