@@ -57,8 +57,25 @@ docker compose up --build monolith
 The microservices (port 8000) and the monolith (port 8080) can run at the same time
 against separate databases.
 
-To point the React frontend at the monolith, change `baseURL` in
-`frontend/src/api/client.js` from `http://localhost:8000` to `http://localhost:8080`.
+### Seed sample data (meals + ingredients)
+
+A fresh `db-mono` database starts empty, so meal searches (e.g. the food
+recognition "log this food" flow) return 404 until you load the sample data.
+After the `monolith` container is up, run once:
+
+```bash
+docker exec -i ai-nutrition-coach-db-mono-1 psql -U user -d mydatabase_mono < monolith/seed.sql
+```
+
+This inserts 16 ingredients and 8 meals (Cheeseburger, Pizza Pepperoni, etc.).
+The data persists in the `postgres_mono_data` volume.
+
+### Pointing the React frontend at the monolith
+
+The frontend reads `VITE_API_URL`. On this branch `frontend/.env` already sets it
+to `http://localhost:8080`, so `npm run dev -- --port 3000` talks to the monolith.
+(Use port 3000 — the monolith's CORS allows `localhost:3000`.) To target the
+microservices gateway instead, set `VITE_API_URL=http://localhost:8000`.
 
 ### Tests
 
