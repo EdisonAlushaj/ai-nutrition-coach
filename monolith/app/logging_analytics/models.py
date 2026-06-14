@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Date
+from sqlalchemy import Column, Integer, String, Float, DateTime, Date, Boolean
 from sqlalchemy.sql import func
 from ..database import Base
 
@@ -13,6 +13,7 @@ class FoodLog(Base):
     protein_g = Column(Float, default=0.0)
     carbs_g = Column(Float, default=0.0)
     fat_g = Column(Float, default=0.0)
+    is_manual = Column(Boolean, default=False, nullable=False)
 
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
@@ -9,6 +9,8 @@ const Login = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const resetSuccess = searchParams.get('reset') === 'success';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -33,6 +35,12 @@ const Login = () => {
                     <p className="text-gray-400">Enter your details to access your account</p>
                 </div>
 
+                {resetSuccess && (
+                    <div className="bg-emerald-500/10 border border-emerald-500/50 text-emerald-400 px-4 py-3 rounded-lg mb-6 text-sm">
+                        Password updated successfully. You can sign in with your new password.
+                    </div>
+                )}
+
                 {error && (
                     <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-3 rounded-lg mb-6 text-sm">
                         {error}
@@ -55,7 +63,9 @@ const Login = () => {
                     <div>
                         <div className="flex justify-between items-center mb-2">
                             <label className="block text-gray-300 text-sm font-medium" htmlFor="password">Password</label>
-                            <a href="#" className="text-sm text-brand-primary hover:text-brand-accent transition-colors">Forgot?</a>
+                            <Link to="/forgot-password" className="text-sm text-brand-primary hover:text-brand-accent transition-colors">
+                                Forgot?
+                            </Link>
                         </div>
                         <input
                             className="w-full bg-brand-dark/50 border border-white/10 rounded-xl py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary/50 focus:border-brand-primary transition-all"

@@ -1,16 +1,8 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useEffect, useState } from 'react';
 
 const Navbar = () => {
     const { user, logout } = useAuth();
-
-    const [role, setRole] = useState(() => localStorage.getItem('role'));
-
-    // Sync role when auth changes
-    useEffect(() => {
-        setRole(localStorage.getItem('role'));
-    }, [user]);
 
     return (
         <nav className="fixed w-full z-50 bg-brand-dark/80 backdrop-blur-md border-b border-white/10">
@@ -35,7 +27,7 @@ const Navbar = () => {
                         </>
                     )}
 
-                    {role === 'admin' && (
+                    {user?.role === 'admin' && (
                         <Link
                             to="/admin"
                             className="text-brand-accent hover:text-brand-primary font-bold transition-colors"
@@ -53,10 +45,7 @@ const Navbar = () => {
                                 Hi, {user.email.split('@')[0]}
                             </span>
                             <button
-                                onClick={() => {
-                                    logout();
-                                    localStorage.removeItem('role');
-                                }}
+                                onClick={logout}
                                 className="text-gray-300 hover:text-white transition-colors font-medium"
                             >
                                 Logout

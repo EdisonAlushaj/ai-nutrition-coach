@@ -15,6 +15,8 @@ from .logging_analytics import models as logging_models  # noqa: F401
 from .users.router import router as users_router
 from .nutrition.router import router as nutrition_router
 from .logging_analytics.router import router as logging_router
+from .motivation.router import router as motivation_router
+from .barcode.router import router as barcode_router
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -44,6 +46,21 @@ def on_startup():
     # food_logs, daily_analytics) in the single shared database.
     Base.metadata.create_all(bind=engine)
 
+    # Lightweight migration for existing databases (create_all does not alter tables).
+    with engine.begin() as connection:
+        connection.exec_driver_sql(
+            "ALTER TABLE food_logs ADD COLUMN IF NOT EXISTS is_manual BOOLEAN NOT NULL DEFAULT FALSE"
+        )
+        connection.exec_driver_sql(
+            "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS first_name VARCHAR"
+        )
+        connection.exec_driver_sql(
+            "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS last_name VARCHAR"
+        )
+        connection.exec_driver_sql(
+            "ALTER TABLE profiles ADD COLUMN IF NOT EXISTS target_weight_kg FLOAT"
+        )
+
 
 @app.get("/")
 async def root():
@@ -55,6 +72,8 @@ async def root():
 app.include_router(users_router)
 app.include_router(nutrition_router)
 app.include_router(logging_router)
+app.include_router(motivation_router)
+app.include_router(barcode_router)
 
 # Food recognition pulls in TensorFlow (heavy). Guard the import so a missing or
 # broken TF install degrades gracefully — the rest of the API still boots.

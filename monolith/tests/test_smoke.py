@@ -33,7 +33,9 @@ def test_register_login_and_me(client):
 
     me = client.get("/users/me", headers=headers)
     assert me.status_code == 200
-    assert me.json()["email"] == email
+    me_body = me.json()
+    assert me_body["email"] == email
+    assert me_body["profile"]["goal"] == PROFILE["goal"]
 
     login = client.post("/login", json={"email": email, "password": PASSWORD})
     assert login.status_code == 200

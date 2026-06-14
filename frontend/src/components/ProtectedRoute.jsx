@@ -3,7 +3,6 @@ import { useAuth } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
     const { user, loading } = useAuth();
-    const role = localStorage.getItem('role');
 
     if (loading) {
         return (
@@ -19,7 +18,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
     }
 
     // Admin only
-    if (adminOnly && role !== 'admin') {
+    if (adminOnly && user?.role !== 'admin') {
         return <Navigate to="/dashboard" replace />;
     }
 
